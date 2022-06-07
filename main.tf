@@ -52,11 +52,6 @@ resource "yandex_compute_instance" "vm-workspace" {
     subnet_id = "${yandex_vpc_subnet.netology-subnet.id}"
     nat = true
   }
-
-  metadata = {
-    foo      = "bar"
-    ssh-keys = "ubuntu:${file("~/.ssh/for_netology_rsa")}"
-  }
 }
 
 resource "yandex_vpc_network" "netology" {
@@ -99,10 +94,6 @@ resource "yandex_compute_instance" "vm-other" {
     nat = true
   }
 
-  metadata = {
-    foo      = "bar"
-    ssh-keys = "ubuntu:${file("~/.ssh/for_netology_rsa")}"
-  }
 
 #  lifecycle {
 #  create_before_destroy = true
