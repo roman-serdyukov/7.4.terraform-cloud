@@ -32,15 +32,15 @@ locals {
 }
 
 resource "yandex_compute_instance" "vm-workspace" {
-  name        = "vm-${terraform.workspace}-state-${count.index + 1}"
+  name        = "vm-prod-state-${count.index + 1}"
   platform_id = "standard-v2"
   
   resources {
-    cores  = local.web_instance_resources_map[terraform.workspace].cores
-    memory = local.web_instance_resources_map[terraform.workspace].memory
+    cores  = local.web_instance_resources_map.prod.cores
+    memory = local.web_instance_resources_map.prod.memory
   } 
 
-  count = local.web_instance_count_map[terraform.workspace]
+  count = local.web_instance_count_map.prod
 
   boot_disk {
     initialize_params {
@@ -65,7 +65,7 @@ resource "yandex_vpc_network" "netology" {
 
 resource "yandex_vpc_subnet" "netology-subnet" {
   name           = "netology-subnet"
-  v4_cidr_blocks = local.vpc_subnet_map[terraform.workspace]
+  v4_cidr_blocks = ["192.168.118.0/16"]
   network_id     = "${yandex_vpc_network.netology.id}"
 }
 
@@ -104,10 +104,10 @@ resource "yandex_compute_instance" "vm-other" {
     ssh-keys = "ubuntu:${file("~/.ssh/for_netology_rsa")}"
   }
 
-  lifecycle {
-  create_before_destroy = true
-  prevent_destroy = true
-  }
+#  lifecycle {
+#  create_before_destroy = true
+#  prevent_destroy = true
+#  }
 }
 
 data "yandex_client_config" "client" {}
