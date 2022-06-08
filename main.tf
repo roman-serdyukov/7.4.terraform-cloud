@@ -52,6 +52,7 @@ resource "yandex_compute_instance" "vm-workspace" {
     subnet_id = "${yandex_vpc_subnet.netology-subnet.id}"
     nat = true
   }
+
 }
 
 resource "yandex_vpc_network" "netology" {
@@ -60,16 +61,8 @@ resource "yandex_vpc_network" "netology" {
 
 resource "yandex_vpc_subnet" "netology-subnet" {
   name           = "netology-subnet"
-  v4_cidr_blocks = ["192.168.118.0/16"]
+  v4_cidr_blocks = local.vpc_subnet_map.prod
   network_id     = "${yandex_vpc_network.netology.id}"
-}
-
-resource "yandex_vpc_address" "ext_netology" {
-  name = "ext_ip"
-
-  external_ipv4_address {
-    zone_id = "ru-central1-a"
-  }
 }
 
 resource "yandex_compute_instance" "vm-other" {
@@ -93,12 +86,6 @@ resource "yandex_compute_instance" "vm-other" {
     subnet_id = "${yandex_vpc_subnet.netology-subnet.id}"
     nat = true
   }
-
-
-#  lifecycle {
-#  create_before_destroy = true
-#  prevent_destroy = true
-#  }
 }
 
 data "yandex_client_config" "client" {}
